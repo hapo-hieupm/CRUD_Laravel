@@ -9,10 +9,10 @@ class DatabaseSeeder extends Seeder
         $limit = 5;
         for ($i = 0; $i < $limit; $i++) {
             DB::table('users')->insert([
-            'name' => Str::random(10),
-            'email' => Str::random(10).'@gmail.com',
-            'password' => Hash::make('password'),
-            'gender'=>random_int(0,1)
+                'name' => Str::random(10),
+                'email' => Str::random(10).'@gmail.com',
+                'password' => Hash::make('password'),
+                'gender'=>random_int(0,1)
         ]);
         }
     }
