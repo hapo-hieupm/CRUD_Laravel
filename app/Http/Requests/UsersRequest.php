@@ -16,7 +16,7 @@ class UsersRequest extends FormRequest
         return [
             'name'=>'required',
             'email'=>'required|email|unique:users,email,' . $this->user, 
-            'password'=>'required',
+            'password'=>'required|min:8',
             'birthday'=>'before:now',
             'phone' => 'numeric',
             'ava' => 'image',
