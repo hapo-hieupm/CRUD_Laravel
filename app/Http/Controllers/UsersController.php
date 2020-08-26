@@ -32,7 +32,7 @@ class UsersController extends Controller
             $allRequest['ava'] = $imageName;
         }
         User::create($allRequest);
-        return redirect('/users')->with('notice', __('notice.success.store'));
+        return redirect()->route('users')->with('notice', __('notice.success.store'));
     }
 
     
@@ -54,7 +54,7 @@ class UsersController extends Controller
             $user['ava'] = $ava;
         }
         User::findOrFail($id)->update($user);
-        return redirect('/users')->with('notice', __('notice.success.update'));
+        return redirect()->route('users')->with('notice', __('notice.success.update'));
     }
 
     
@@ -66,6 +66,6 @@ class UsersController extends Controller
             if ($user->id %2 ==0)
             $user->forceDelete();
         }
-        return redirect('/users')->with('notice', __('notice.success.delete'));
+        return redirect()->route('users')->with('notice', __('notice.success.delete'));
     }
 }
