@@ -3,22 +3,20 @@
 <div class="row">
     <div class="col-sm-8 offset-sm-2">
         <h1 class="display-3">Update a user</h1>
-
         @if ($errors->any())
-        <div class="alert alert-danger">
-            <ul>
-                @foreach ($errors->all() as $error)
-                <li>{{ $error }}</li>
-                @endforeach
-            </ul>
-        </div>
-        <br /> 
+            <div class="alert alert-danger">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            <br /> 
         @endif
-        <form method="post" action="{{ route('users.update', $user->id) }}">
+        <form method="post" action="{{ route('users.update', $user->id) }}" enctype="multipart/form-data">
             @method('PATCH') 
             @csrf
             <div class="form-group">
-
                 <label for="name">Name:</label>
                 <input type="text" class="form-control" name="name" value="{{ old('full_name', $user->name) }}">
             </div>
@@ -43,28 +41,29 @@
                 <input type="text" class="form-control" name="password" value="{{ old('password', $user->password) }}">
             </div>
             <div class="form-group">
-          <th>Gender</th>
-            <td>
-                <input class="form-check-input ml-1" type="radio" name="gender" id="0" value="{{ old('gender', $user->gender) }}" >
-                <label for="1" class="ml-4">Male</label>
-                <input class="form-check-input ml-4" type="radio" name="gender" id="1" value="{{ old('gender', $user->gender) }}" >
-                <label for="2" class="ml-5">Female</label>
-                @if($errors->has('gender'))
-                    <br>
-                    <small class="text-danger">{{ $errors->first('gender') }}</small>
-                @endif  
+                <th>Gender</th>
+                <td>
+                    <input class="form-check-input ml-1" type="radio" name="gender" id="0" value="0" {{ old('gender', $user->gender) ==  App\User::getGender('Male') ? 'checked' : '' }} > 
+                                                                                                        
+                    <label for="1" class="ml-4">Male</label>
+                    <input class="form-check-input ml-4" type="radio" name="gender" id="1" value="1" {{  old('gender', $user->gender) ==  App\User::getGender('Female') ? 'checked' : '' }} >
+                    <label for="2" class="ml-5">Female</label>
+                    @if($errors->has('gender'))
+                        <br>
+                        <small class="text-danger">{{ $errors->first('gender') }}</small>
+                    @endif  
                 </td>      
-                </div>
-                <div class="form-group">
+            </div>
+            <div class="form-group">
                 <th>Avatar</th>
-            <td>
-                <input type="file" class="form-control-file border" name="ava" value="{{ old('ava', $user->ava) }}">
-                @if($errors->has('ava'))
-                    <br>
-                    <small class="text-danger">{{ $errors->first('ava') }}</small>
-                @endif
-            </td>
-                </div>    
+                <td>
+                    <input type="file" class="form-control-file border" name="ava" value="{{ old('ava', $user->ava) }}">
+                    @if($errors->has('ava'))
+                        <br>
+                        <small class="text-danger">{{ $errors->first('ava') }}</small>
+                    @endif
+                </td>
+            </div>    
             <button type="submit" class="btn btn-primary">Update</button>
         </form>
     </div>

@@ -2,132 +2,84 @@
 
 namespace App\Http\Controllers;
 
-
 use App\User;
 
 use App\Http\Requests\UsersRequest;
 
 use Illuminate\Support\Facades\Storage;
 
+use Illuminate\Support\Facades\DB;
+
+use Session;
+
+use App\Enums\Gender;
+
+use BenSampo\Enum\Rules\EnumValue;
+
 class UsersController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index()
-    {
-        $users = User::all();
-
+    {   
+        $users = User::paginate(config('pagination.pagination'));
         return view('users.index', compact('users'));
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function create()
     {
         return view('users.create');
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(UsersRequest $request)
     {   
-        $ava = null;
-        if ($request->hasFile('ava')) {
-            $ava = uniqid(). "_" .$request->ava->getClientOriginalName();
-            $request->file('ava')->storeAs('public', $ava);
+        $allRequest  = $request->all();
+
+        if($request->hasFile('ava')) {
+            $path = Storage::putFile('ava', $request->file('ava'));
+            $destinationPath = 'public/images/';
+            $image = $request->file('ava');
+            $imageName = $image->getClientOriginalName();
+            $path = $request->file('ava')->storeAs($destinationPath, $imageName);
+            $allRequest['ava'] = $imageName;
         }
 
-        $user = new User([
-            'name' => $request->get('name'),
-            'email' => $request->get('email'),
-            'password'=> $request->get('password'),
-            'ava'=> $ava,
-            'gender'=> $request->get('gender'),
-            'address'=> $request->get('address'),
-            'phone'=> $request->get('phone'),
-            'birthday'=> $request->get('birthday'),
-        ]);
-        $users->save();
+        User::create($allRequest);
+       
         return redirect('/users')->with('notice', __('notice.success.store'));
     }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function edit($id)
     {
         $user = User::find($id);
         return view('users.edit', compact('user'));   
     }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
     public function update(UsersRequest $request, $id)
     {
-        $data = $request->all();
+        $user = $request->all();
         if ($request->hasFile('ava')) {
-            $ava = uniqid(). "_" .$request->ava->getClientOriginalName();
-            $request->file('ava')->storeAs('public', $ava);
-            $image = User::find($id)->ava;
-            Storage::delete('public/'.$image);    
-            $data['ava'] = $ava;
+            $file = $request->ava;
+            $ava = uniqid() . "_" . $file->getClientOriginalName();
+            $oldAva = User::find($id)->ava;
+            Storage::delete('public/images/' . $oldAva);
+            $request->file('ava')->storeAs('public/images/', $ava);
+            $user['ava'] = $ava;
         }
-        $user = User::find($id);
-        $user->update($data);
-        $user->name =  $request->get('name');
-        $user->email = $request->get('email');
-        $user->gender = $request->get('gender');
-        $user->address = $request->get('address');
-        $user->phone = $request->get('phone');
-        $user->birthday = $request->get('birthday');
-        $user->save();
-
-        return redirect('/users')->with('success', 'Users updated!');
+        User::findOrFail($id)->update($user);
+        return redirect('/users')->with('notice', __('notice.success.update'));
     }
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
+    
     public function destroy($id)
     {
         $user = User::find($id);
         $user->delete();
+
         if ($user->trashed()) {
             if ($user->id %2 ==0)
             $user->forceDelete();
         }
-        return redirect('/users')->with('success', 'Users deleted!');
+        
+        return redirect('/users')->with('notice', __('notice.success.delete'));
     }
 }

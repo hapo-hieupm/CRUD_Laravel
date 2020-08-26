@@ -7,11 +7,6 @@ use App\Enums\Gender;
 
 class CreateUsersTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         if(!Schema::hasTable('users')) {
@@ -20,7 +15,7 @@ class CreateUsersTable extends Migration
                 $table->string('email')->unique();
                 $table->string('name')->nullable();
                 $table->string('ava')->nullable();
-                $table->tinyInteger('gender')->unsigned()->default(Gender::Male);
+                $table->tinyInteger('gender')->unsigned();
                 $table->string('address')->nullable();
                 $table->string('phone')->nullable();
                 $table->date('birthday')->nullable();
@@ -32,11 +27,6 @@ class CreateUsersTable extends Migration
         }
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::table('users', function (Blueprint $table) {

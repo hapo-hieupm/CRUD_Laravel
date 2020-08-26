@@ -12,11 +12,22 @@ class User extends Authenticatable
 {
     use Notifiable;
     use SoftDeletes;
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
+
+    public const GENDERS = [
+        0 => 'Male',
+        1 => 'Female'
+     ];
+
+    public static function getGender($gender)
+    {
+        return array_search($gender, self::GENDERS);
+    }   
+    
+    public function getGenderValueAttribute()
+    {
+        return self::GENDERS[ $this->attributes['gender'] ];
+    } 
+
     protected $fillable = [
         'name',
         'email',
@@ -28,20 +39,10 @@ class User extends Authenticatable
         'birthday',
     ];
 
-    /**
-     * The attributes that should be hidden for arrays.
-     *
-     * @var array
-     */
     protected $hidden = [
         'password', 'remember_token',
     ];
 
-    /**
-     * The attributes that should be cast to native types.
-     *
-     * @var array
-     */
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
