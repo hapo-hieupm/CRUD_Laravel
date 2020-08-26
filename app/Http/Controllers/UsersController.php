@@ -1,20 +1,11 @@
 <?php
 
 namespace App\Http\Controllers;
-
 use App\User;
-
 use App\Http\Requests\UsersRequest;
-
 use Illuminate\Support\Facades\Storage;
-
 use Illuminate\Support\Facades\DB;
-
 use Session;
-
-use App\Enums\Gender;
-
-use BenSampo\Enum\Rules\EnumValue;
 
 class UsersController extends Controller
 {
