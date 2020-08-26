@@ -32,7 +32,6 @@ class UsersController extends Controller
     public function store(UsersRequest $request)
     {   
         $allRequest  = $request->all();
-
         if($request->hasFile('ava')) {
             $path = Storage::putFile('ava', $request->file('ava'));
             $destinationPath = 'public/images/';
@@ -41,9 +40,7 @@ class UsersController extends Controller
             $path = $request->file('ava')->storeAs($destinationPath, $imageName);
             $allRequest['ava'] = $imageName;
         }
-
         User::create($allRequest);
-       
         return redirect('/users')->with('notice', __('notice.success.store'));
     }
 
@@ -74,12 +71,10 @@ class UsersController extends Controller
     {
         $user = User::find($id);
         $user->delete();
-
         if ($user->trashed()) {
             if ($user->id %2 ==0)
             $user->forceDelete();
         }
-        
         return redirect('/users')->with('notice', __('notice.success.delete'));
     }
 }
