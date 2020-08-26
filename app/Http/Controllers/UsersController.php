@@ -63,7 +63,7 @@ class UsersController extends Controller
         $user = User::find($id);
         $user->delete();
         if ($user->trashed()) {
-            if ($user->id %2 ==0)
+            if ($user->id %2 == 0)
             $user->forceDelete();
         }
         return redirect()->route('users')->with('notice', __('notice.success.delete'));
